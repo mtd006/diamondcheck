@@ -1,0 +1,6 @@
+{
+  "name": "Diamond Check",
+  "description": "Diamond Check - AI-powered diamond quality control, GIA & IGI certificate verification, 4Cs fraud detection, and instant gemological audit report portal.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
