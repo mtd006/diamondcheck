@@ -1,6 +1,5 @@
 import express from 'express';
 import path from 'path';
-import { createServer as createViteServer } from 'vite';
 import { GoogleGenAI, Type } from '@google/genai';
 import { getOrCreateCertificate } from './src/data/sampleCertificates';
 import { SessionData, AnalysisResult, InclusionItem } from './src/types';
@@ -21,8 +20,14 @@ app.use((req, res, next) => {
   }
 
   // Normalize path if Vercel serverless rewrites strip or alter the /api prefix
-  if (req.url && !req.url.startsWith('/api/') && req.url !== '/api') {
-    req.url = '/api' + (req.url.startsWith('/') ? '' : '/') + req.url;
+  if (req.url) {
+    // If request comes as /index.ts or /api/index.ts due to vercel function routing
+    if (req.url.startsWith('/api/index.ts')) {
+      req.url = req.url.replace('/api/index.ts', '') || '/api';
+    }
+    if (!req.url.startsWith('/api/') && req.url !== '/api') {
+      req.url = '/api' + (req.url.startsWith('/') ? '' : '/') + req.url;
+    }
   }
   next();
 });
@@ -803,7 +808,8 @@ Return a structured JSON object adhering to this EXACT schema:
 
 // Vite & Static File Server Handler
 async function startServer() {
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa'

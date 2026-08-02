@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { User, UserRole } from '../types';
-import { X, Lock, Key, ShieldCheck, UserPlus, LogIn, Sparkles, Building, Phone, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Lock, Key, ShieldCheck, UserPlus, LogIn, Sparkles, Building, Phone, Mail, CheckCircle2, AlertCircle, Eye, EyeOff } from 'lucide-react';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -19,6 +19,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [userId, setUserId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [pin, setPin] = useState<string>('');
+
+  // Password / PIN Visibility toggles
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPin, setShowPin] = useState<boolean>(false);
+  const [showRegPassword, setShowRegPassword] = useState<boolean>(false);
 
   // Register state
   const [regName, setRegName] = useState<string>('');
@@ -239,14 +244,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               <label className="block text-slate-300 font-semibold mb-1">
                 Password <span className="text-cyan-400">*</span>
               </label>
-              <input
-                type="password"
-                required
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-3.5 pr-10 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400 transition"
+                  title={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
 
             {/* PIN Field */}
@@ -256,14 +271,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <Key className="w-3.5 h-3.5 text-cyan-400" />
                   <span>Admin Security PIN</span>
                 </label>
-                <input
-                  type="password"
-                  maxLength={6}
-                  placeholder="Enter 6-digit PIN"
-                  value={pin}
-                  onChange={(e) => setPin(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono text-center tracking-widest text-sm"
-                />
+                <div className="relative">
+                  <input
+                    type={showPin ? 'text' : 'password'}
+                    maxLength={6}
+                    placeholder="Enter 6-digit PIN"
+                    value={pin}
+                    onChange={(e) => setPin(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-10 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono text-center tracking-widest text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPin(!showPin)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400 transition"
+                    title={showPin ? 'Hide PIN' : 'Show PIN'}
+                  >
+                    {showPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
             )}
 
@@ -328,14 +353,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <label className="block text-slate-300 font-semibold mb-1">
                   Password <span className="text-cyan-400">*</span>
                 </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  value={regPassword}
-                  onChange={(e) => setRegPassword(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-100 font-mono placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-                />
+                <div className="relative">
+                  <input
+                    type={showRegPassword ? 'text' : 'password'}
+                    required
+                    placeholder="••••••••"
+                    value={regPassword}
+                    onChange={(e) => setRegPassword(e.target.value)}
+                    className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-3 pr-9 py-2 text-slate-100 font-mono placeholder-slate-500 focus:outline-none focus:border-cyan-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowRegPassword(!showRegPassword)}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400 transition"
+                    title={showRegPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showRegPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
               </div>
             </div>
 
