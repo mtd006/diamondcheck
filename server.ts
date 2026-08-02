@@ -11,6 +11,17 @@ const PORT = 3000;
 // Body parser
 app.use(express.json({ limit: '25mb' }));
 
+// CORS headers for Vercel & cross-origin deployment
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // In-memory Session Database for time-limited 30-minute tokens
 const SESSIONS_DB = new Map<string, SessionData>();
 
@@ -796,4 +807,8 @@ async function startServer() {
   });
 }
 
-startServer();
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;

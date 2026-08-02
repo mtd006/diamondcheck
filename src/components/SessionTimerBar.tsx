@@ -48,7 +48,7 @@ export const SessionTimerBar: React.FC<SessionTimerBarProps> = ({
             onClick={onRenew}
             className="underline hover:text-amber-100 font-semibold text-xs ml-auto"
           >
-            Activate 30-Min Token ($15)
+            Activate 30-Min Token ($5)
           </button>
         </div>
       </div>
