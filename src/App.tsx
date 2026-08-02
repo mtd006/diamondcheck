@@ -231,7 +231,7 @@ export default function App() {
                     onClick={() => setIsAuthOpen(true)}
                     className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs shadow-lg transition active:scale-95"
                   >
-                    Admin Login (User ID: mtd006)
+                    Portal / Admin Sign-In
                   </button>
                   <button
                     onClick={() => setIsPaymentOpen(true)}

@@ -11,7 +11,7 @@ const PORT = 3000;
 // Body parser
 app.use(express.json({ limit: '25mb' }));
 
-// CORS headers for Vercel & cross-origin deployment
+// CORS headers & Vercel path normalization for serverless functions
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -19,7 +19,22 @@ app.use((req, res, next) => {
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
+
+  // Normalize path if Vercel serverless rewrites strip or alter the /api prefix
+  if (req.url && !req.url.startsWith('/api/') && req.url !== '/api') {
+    req.url = '/api' + (req.url.startsWith('/') ? '' : '/') + req.url;
+  }
   next();
+});
+
+// Root API Health Route
+app.get('/api', (req, res) => {
+  res.json({
+    status: 'ok',
+    app: 'Diamond Check AI Quality Control Portal',
+    version: '2.0.0',
+    timestamp: new Date().toISOString()
+  });
 });
 
 // In-memory Session Database for time-limited 30-minute tokens

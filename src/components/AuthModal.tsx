@@ -61,17 +61,22 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         body: JSON.stringify({ userId, password, pin })
       });
 
-      const data = await res.json();
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: `Server response error (${res.status})` };
+      }
 
       if (res.status === 403 && data.pinRequired) {
         setShowPinInput(true);
-        setErrorMsg('Security PIN required for Admin login (User ID: mtd006). Enter PIN: 100001');
+        setErrorMsg('Security PIN required for Admin login. Please enter your 6-digit Admin PIN.');
         setIsLoading(false);
         return;
       }
 
       if (!res.ok || !data.success) {
-        setErrorMsg(data.error || 'Login failed. Please check credentials.');
+        setErrorMsg(data.error || 'Login failed. Please verify credentials.');
         setIsLoading(false);
         return;
       }
@@ -82,7 +87,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onClose();
       }, 600);
     } catch (err: any) {
-      setErrorMsg('Network error during login attempt.');
+      setErrorMsg('Unable to connect to authentication service. Please check connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -110,7 +115,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         })
       });
 
-      const data = await res.json();
+      let data: any = {};
+      try {
+        data = await res.json();
+      } catch (e) {
+        data = { error: `Server response error (${res.status})` };
+      }
 
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || 'Registration failed.');
@@ -124,7 +134,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         onClose();
       }, 700);
     } catch (err: any) {
-      setErrorMsg('Registration failed due to network error.');
+      setErrorMsg('Unable to connect to registration service. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -144,7 +154,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             </div>
             <div>
               <h2 className="text-lg font-bold font-serif text-white">
-                {tab === 'LOGIN' ? 'QC Portal User Sign-In' : 'Create Merchant / Inspector Account'}
+                {tab === 'LOGIN' ? 'QC Portal Sign-In' : 'Create Merchant / Inspector Account'}
               </h2>
               <p className="text-xs text-slate-400">Secure access to diamond inspection dossiers & admin controls</p>
             </div>
@@ -191,22 +201,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           </button>
         </div>
 
-        {/* Quick Admin Autofill Banner */}
-        <div className="bg-cyan-950/60 border border-cyan-800/80 rounded-xl p-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
-          <div className="flex items-center space-x-2">
-            <Sparkles className="w-4 h-4 text-cyan-400 shrink-0" />
-            <span className="text-cyan-200 text-[11px]">
-              Fixed Admin Login: <code className="font-mono text-cyan-300 font-bold">mtd006</code>
-            </span>
-          </div>
-          <button
-            onClick={handleAutofillAdmin}
-            className="px-3 py-1 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-[11px] rounded-lg transition shrink-0"
-          >
-            Autofill Fixed Admin Credentials
-          </button>
-        </div>
-
         {/* Alert Messages */}
         {errorMsg && (
           <div className="bg-rose-950/80 border border-rose-800 text-rose-300 p-3 rounded-xl text-xs flex items-center space-x-2">
@@ -233,7 +227,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <input
                   type="text"
                   required
-                  placeholder="e.g. mtd006 or user@domain.com"
+                  placeholder="e.g. User ID or email@domain.com"
                   value={userId}
                   onChange={(e) => setUserId(e.target.value)}
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 font-mono"
@@ -255,17 +249,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
               />
             </div>
 
-            {/* PIN Field (Mandatory for Admin mtd006 or when requested) */}
+            {/* PIN Field */}
             {(showPinInput || userId.trim() === 'mtd006') && (
               <div className="p-3 bg-slate-950 rounded-xl border border-cyan-800/80 space-y-1">
                 <label className="block text-cyan-300 font-semibold flex items-center space-x-1.5">
                   <Key className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Admin Security PIN (Fixed: 100001)</span>
+                  <span>Admin Security PIN</span>
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   maxLength={6}
-                  placeholder="Enter 6-digit PIN (100001)"
+                  placeholder="Enter 6-digit PIN"
                   value={pin}
                   onChange={(e) => setPin(e.target.value)}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-mono text-center tracking-widest text-sm"
